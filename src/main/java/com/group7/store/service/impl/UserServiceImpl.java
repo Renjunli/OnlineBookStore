@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2021/1/18
  */
 @Service("firstUser")
-public class UserServiceImp implements UserService {
+public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 

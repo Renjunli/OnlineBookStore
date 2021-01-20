@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("firstPublish")
-public class PublishServiceImp implements PublishService {
+public class PublishServiceImpl implements PublishService {
 
     @Autowired
     PublishMapper publishMapper;

@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service("firstVersion")
-public class BookServiceImp implements BookService {
+public class BookServiceImpl implements BookService {
 
     private static final String book_prefix = "bookStore_book_";
     private static final String bookList_prefix = "bookStore_bookList";

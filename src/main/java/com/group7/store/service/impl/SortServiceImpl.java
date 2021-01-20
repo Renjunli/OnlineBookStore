@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("firstSort")
-public class SortServiceImp implements SortService {
+public class SortServiceImpl implements SortService {
 
     @Autowired
     SortMapper sortMapper;

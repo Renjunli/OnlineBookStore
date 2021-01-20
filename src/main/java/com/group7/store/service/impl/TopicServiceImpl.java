@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("firstTopic")
-public class TopicServiceImp implements TopicService {
+public class TopicServiceImpl implements TopicService {
 
     @Autowired
     TopicMapper topicMapper;

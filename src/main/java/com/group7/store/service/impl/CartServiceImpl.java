@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Service("firstCart")
-public class CartServiceImp implements CartService {
+public class CartServiceImpl implements CartService {
     @Autowired
     CartMapper cartMapper;
 

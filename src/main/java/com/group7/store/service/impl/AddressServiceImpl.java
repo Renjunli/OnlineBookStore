@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("firstAddress")
-public class AddressServiceImp implements AddressService {
+public class AddressServiceImpl implements AddressService {
 
     @Autowired
     AddressMapper addressMapper;
