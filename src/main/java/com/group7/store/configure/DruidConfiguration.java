@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import java.sql.SQLException;
  * @Date: 2021/1/17
  * Druid数据源配置
  */
+@Configuration
 public class DruidConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
 
