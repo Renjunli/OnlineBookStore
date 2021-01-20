@@ -88,10 +88,28 @@ spring:
   #      sql:
   #        show: true
   datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/bookstore?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: admin
+    # 连接池配置
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,slf4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    useGlobalDataSourceStat: true
+
   ## Redis 配置
   redis:
     ## Redis数据库索引（默认为0）
