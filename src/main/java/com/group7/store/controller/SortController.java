@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 
 @Controller
@@ -23,7 +22,8 @@ public class SortController {
 
     /**
      * 添加图书的分类
-     *
+     * 2021/1/18
+     * jcz
      * @param bookSort
      * @return
      */
@@ -37,8 +37,9 @@ public class SortController {
     }
 
     /**
-     * 得到图书的分类
-     *
+     * 查询图书的分类
+     * 2021/1/18
+     * jcz
      * @param upperName
      * @param sortName
      * @return
@@ -56,7 +57,8 @@ public class SortController {
 
     /**
      * 修改图书的分类
-     *
+     * 2021/1/18
+     * jcz
      * @param bookSort
      * @return
      */
@@ -77,7 +79,8 @@ public class SortController {
 
     /**
      * 按页到一级分类集合
-     *
+     * 2021/1/18
+     * jcz
      * @param page
      * @param pageSize
      * @return
@@ -95,7 +98,8 @@ public class SortController {
 
     /**
      * 按页得到二级分类集合
-     *
+     * 2021/1/18
+     * jcz
      * @param upperName
      * @param page
      * @param pageSize
@@ -116,7 +120,8 @@ public class SortController {
 
     /**
      * 得到所有一级分类的名称
-     *
+     * 2021/1/18
+     * jcz
      * @return
      */
     @GetMapping("/getUpperNames")
@@ -132,7 +137,8 @@ public class SortController {
 
     /**
      * 得到分类的一级分类和二级分类，封装后放给前端
-     *
+     * 2021/1/18
+     * jcz
      * @return
      */
     @GetMapping("/getBookSortList")
@@ -153,7 +159,8 @@ public class SortController {
 
     /**
      * 删除一级分类
-     *
+     * 2021/1/18
+     * jcz
      * @param sortName
      * @return
      */
@@ -168,7 +175,8 @@ public class SortController {
 
     /**
      * 删除二级分类
-     *
+     * 2021/1/18
+     * jcz
      * @param sortName
      * @param upperName
      * @return
