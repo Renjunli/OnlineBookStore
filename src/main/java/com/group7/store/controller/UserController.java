@@ -67,7 +67,12 @@ public class UserController {
         }
         return ResultUtil.resultCode(500, "注册失败");
     }
-
+    /**
+     * 账号验证
+     *
+     * @param account
+     * @return
+     */
     @GetMapping(value="user/accountVerify")
     @ResponseBody
     public Map<String,Object> registerUser(@RequestParam(value = "account")String account)
@@ -241,4 +246,5 @@ public class UserController {
         }
         return ResultUtil.resultCode(500, "修改密码错误!请确认你输入了原先正确的密码");
     }
+
 }
