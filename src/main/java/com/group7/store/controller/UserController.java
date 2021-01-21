@@ -54,6 +54,7 @@ public class UserController {
         User user = new User();
         user.setAccount(account);
         user.setPassword(passwordEncoder.encode(password));
+
         user.setManage(false);
         Date date = new Date();
 
@@ -63,7 +64,17 @@ public class UserController {
         return ResultUtil.resultCode(500, "注册失败");
     }
 
+    @GetMapping(value="user/accountVerify")
+    @ResponseBody
+    public Map<String,Object> registerUser(@RequestParam(value = "account")String account)
+    {
+        User existUser=userService.getUser(account);
+        if(existUser==null)
+            return ResultUtil.resultCode(200,"该账号可用！");
+        return ResultUtil.resultCode(500,"该账号已被注册！");
+    }
 //    =====================对用户地址的操作=====================================
+
 
     /**
      * @return 某个用户的地址列表
