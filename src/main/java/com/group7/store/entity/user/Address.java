@@ -1,7 +1,7 @@
 package com.group7.store.entity.user;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/19
  */
 public class Address {

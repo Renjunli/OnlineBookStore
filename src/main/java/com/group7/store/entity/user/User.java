@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.sql.Timestamp;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/18
  */
 public class User {

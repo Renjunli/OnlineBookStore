@@ -6,20 +6,22 @@ import com.group7.store.entity.user.User;
 import com.group7.store.service.AddressService;
 import com.group7.store.service.UserService;
 import com.group7.store.util.ResultUtil;
+import com.group7.store.util.UploadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class UserController {
-
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     @Qualifier("firstUser")
     UserService userService;
@@ -44,19 +46,21 @@ public class UserController {
     @ResponseBody
     public Map<String, Object> registerUser(@RequestParam(value = "account") String account,
                                             @RequestParam(value = "password") String password) {
-        System.out.println("======开始注册=======");
+        log.info("======开始注册=======");
+
         User user1 = userService.getUser(account);
         if (user1 != null) {
-            System.out.println("该账号已经被注册！");
+            log.info("该账号已经被注册！");
             return ResultUtil.resultCode(500, "该账号已被注册！");
         }
-        System.out.println("该账号未被注册");
+        log.info("该账号未被注册");
+
         User user = new User();
         user.setAccount(account);
         user.setPassword(passwordEncoder.encode(password));
-
+        user.setEnable(true);
         user.setManage(false);
-        Date date = new Date();
+
 
         if (userService.addUser(user) > 0) {
             return ResultUtil.resultCode(200, "注册成功");
@@ -70,7 +74,9 @@ public class UserController {
     {
         User existUser=userService.getUser(account);
         if(existUser==null)
+        {
             return ResultUtil.resultCode(200,"该账号可用！");
+        }
         return ResultUtil.resultCode(500,"该账号已被注册！");
     }
 //    =====================对用户地址的操作=====================================
@@ -83,10 +89,13 @@ public class UserController {
     @GetMapping("/getUserAddress")
     public Map<String, Object> getUserAddress(@RequestParam("account") String account) {
         Map<String, Object> map = new HashMap<>();
-        System.out.println("==============" + account + "===========");
+        log.info("==============================");
+        log.info(account);
+
         List<Address> addressList = addressService.addressList(account);
         for (Address address : addressList) {
-            System.out.println("======" + address.toString() + "========");
+            log.info("==============================");
+            log.info(address.toString());
         }
         map.put("addressList", addressList);
         return ResultUtil.resultSuccess(map);
@@ -176,8 +185,8 @@ public class UserController {
         User user = new User();
         user.setId(id);
         user.setEnable(true);
-        System.out.println("=======id======:" + id);
-        System.out.println("=======status======:" + status);
+        log.info("=======id======:" + id);
+        log.info("=======status======:" + status);
         if (userService.updateUser(user) > 0) {
             return ResultUtil.resultCode(200, "修改成功");
         }
@@ -215,12 +224,16 @@ public class UserController {
                                              @RequestParam(value = "oldPassword") String oldPassword,
                                              @RequestParam(value = "newPassword") String newPassword) {
         User user = userService.getUser(account);
-        System.out.println("=======user account========:" + account + "=========");
-        System.out.println("=====开始修改密码======");
-        System.out.println("=====前端传过来的旧密码：====：" + oldPassword + "=====");
-        System.out.println("=====数据库中的密码：================" + user.getPassword() + "====");
+        log.info("=======user account========:");
+        log.info(account);
+        log.info("=====开始修改密码======");
+        log.info("=====前端传过来的旧密码：====：");
+        log.info(oldPassword);
+        log.info("=====数据库中的密码：================");
+        log.info(user.getPassword());
+
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-            System.out.println("====说明密码匹配正确====");
+            log.info("====说明密码匹配正确====");
             newPassword = passwordEncoder.encode(newPassword);
             if (userService.updatePwd(account, newPassword) > 0) {
                 return ResultUtil.resultCode(200, "修改密码成功");

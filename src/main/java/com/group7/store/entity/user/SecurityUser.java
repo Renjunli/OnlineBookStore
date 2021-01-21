@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/18
  */
 @Data
@@ -20,6 +20,17 @@ public class SecurityUser implements UserDetails {
     private String password;
     private boolean enabled;
     private List<GrantedAuthority> roles;
+
+    public SecurityUser() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -48,4 +59,31 @@ public class SecurityUser implements UserDetails {
         }
         return authorities;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    public List<GrantedAuthority> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<GrantedAuthority> roles) {
+        this.roles = roles;
+    }
+
 }

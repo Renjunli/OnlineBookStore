@@ -3,7 +3,7 @@ package com.group7.store.entity.user;
 import java.sql.Timestamp;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/19
  */
 public class Cart {
