@@ -28,7 +28,9 @@ public class ResultUtil {
      * @return
      */
     public static Map<String, Object> resultError(Map<String, Object> resultMap) {
-        resultMap.put("message", "操作失败");
+        if(!resultMap.containsKey("message")){
+            resultMap.put("message", "操作失败");
+        }
         resultMap.put("code", 500);
         return resultMap;
     }
