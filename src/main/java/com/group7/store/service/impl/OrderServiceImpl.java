@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit;
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
 
-    private static final String stock_prefix = "stock_";//这个用来设置锁
-    private static final String book_stock = "book_stock_";//这个用来存储库存的缓存
-    private static final String book_prefix = "bookStore_book_";//这个用来存储单个图书的数据
-    private static final String bookList_prefix = "bookStore_bookList";//图书集合中数据
+    private static final String STOCK_PREFIX = "stock_";//这个用来设置锁
+    private static final String BOOK_STOCK = "book_stock_";//这个用来存储库存的缓存
+    private static final String BOOK_PREFIX = "bookStore_book_";//这个用来存储单个图书的数据
+    private static final String BOOKLIST_PREFIX = "bookStore_bookList";//图书集合中数据
     @Autowired
     OrderMapper orderMapper;
     @Autowired
@@ -76,24 +76,24 @@ public class OrderServiceImpl implements OrderService {
             System.out.println("=====orderDetail.toString()=====" + orderDetail.toString());
             String clientId = UUID.randomUUID().toString();
             try {
-                Boolean result = redisTemplate.opsForValue().setIfAbsent(stock_prefix + orderBookDto.getId(), clientId, 10, TimeUnit.SECONDS);
+                Boolean result = redisTemplate.opsForValue().setIfAbsent(STOCK_PREFIX + orderBookDto.getId(), clientId, 10, TimeUnit.SECONDS);
                 if (!result) {
                     return false;//获取分布式锁出错了！
                 }
-                if (redisTemplate.hasKey(book_stock + orderBookDto.getId())) {//如果缓存中有库存数据
-                    int stock = Integer.parseInt((String) redisTemplate.opsForValue().get(book_stock + orderBookDto.getId()));
+                if (redisTemplate.hasKey(BOOK_STOCK + orderBookDto.getId())) {//如果缓存中有库存数据
+                    int stock = Integer.parseInt((String) redisTemplate.opsForValue().get(BOOK_STOCK + orderBookDto.getId()));
                     if (stock > orderBookDto.getNum()) {
                         int realStock = stock - orderBookDto.getNum();
-                        redisTemplate.opsForValue().set(book_stock + orderBookDto.getId(), realStock);//更新库存缓存
+                        redisTemplate.opsForValue().set(BOOK_STOCK + orderBookDto.getId(), realStock);//更新库存缓存
                         ValueOperations<String, Book> operations = redisTemplate.opsForValue();
-                        if (redisTemplate.hasKey(book_prefix + orderBookDto.getId())) {
+                        if (redisTemplate.hasKey(BOOK_PREFIX + orderBookDto.getId())) {
                             System.out.println("=========从缓存中读取数据==========");
-                            Book book = operations.get(book_prefix + orderBookDto.getId());
+                            Book book = operations.get(BOOK_PREFIX + orderBookDto.getId());
                             book.setStock(realStock);
-                            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);//更新图书缓存中的数据
+                            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);//更新图书缓存中的数据
                         }
                         Book book = bookMapper.getBook(orderBookDto.getId());
-                        redisTemplate.opsForValue().set(book_prefix + book.getId(), book);//更新图书缓存中的数据
+                        redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);//更新图书缓存中的数据
 //                        redisTemplate.opsForZSet().remove(book);//删除集合中原来的图书数据
                         book.setStock(realStock);
 //                        redisTemplate.opsForZSet().add(bookList_prefix,book,book.getRank());//添加新的图书数据到缓存集合中去
@@ -102,10 +102,10 @@ public class OrderServiceImpl implements OrderService {
                             int update = bookMapper.modifyBookStock(orderBookDto.getId(), orderBookDto.getNum());//减去库存
                             System.out.println("==============减去库存=====================");
                         } catch (Exception e) {
-                            redisTemplate.opsForValue().set(book_stock + orderBookDto.getId(), stock);//恢复缓存中的库存数量，避免少买
+                            redisTemplate.opsForValue().set(BOOK_STOCK + orderBookDto.getId(), stock);//恢复缓存中的库存数量，避免少买
 //                            redisTemplate.opsForZSet().remove(book);//删除集合中原来的图书数据
                             book.setStock(stock);
-                            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);//更新图书缓存中的数据
+                            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);//更新图书缓存中的数据
 //                            redisTemplate.opsForZSet().add(bookList_prefix,book,book.getRank());//添加新的图书数据到缓存集合中去
                         }
                         System.out.println("=============减去库存没有问题======================");
@@ -123,8 +123,8 @@ public class OrderServiceImpl implements OrderService {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             } finally {
-                if (clientId.equals(redisTemplate.opsForValue().get(stock_prefix + orderBookDto.getId()))) {
-                    redisTemplate.delete(stock_prefix + orderBookDto.getId());
+                if (clientId.equals(redisTemplate.opsForValue().get(STOCK_PREFIX + orderBookDto.getId()))) {
+                    redisTemplate.delete(STOCK_PREFIX + orderBookDto.getId());
                 }
             }
         }

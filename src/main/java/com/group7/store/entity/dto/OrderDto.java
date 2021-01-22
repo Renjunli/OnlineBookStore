@@ -60,7 +60,7 @@ public class OrderDto {
     /**
      * 订单
      */
-    private List<OrderDetailDto> OrderDetailDtoList;
+    private List<OrderDetailDto> orderDetailDtoList;
     /**
      * 订单费用明细
      */
@@ -160,11 +160,11 @@ public class OrderDto {
     }
 
     public List<OrderDetailDto> getOrderDetailDtoList() {
-        return OrderDetailDtoList;
+        return orderDetailDtoList;
     }
 
     public void setOrderDetailDtoList(List<OrderDetailDto> orderDetailDtoList) {
-        OrderDetailDtoList = orderDetailDtoList;
+        this.orderDetailDtoList = orderDetailDtoList;
     }
 
     public Expense getExpense() {
@@ -205,7 +205,7 @@ public class OrderDto {
                 ", confirmTime=" + confirmTime +
                 ", orderStatus='" + orderStatus + '\'' +
                 ", logisticsNum='" + logisticsNum + '\'' +
-                ", OrderDetailDtoList=" + OrderDetailDtoList +
+                ", OrderDetailDtoList=" + orderDetailDtoList +
                 ", expense=" + expense +
                 ", address=" + address +
                 '}';
