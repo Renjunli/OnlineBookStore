@@ -228,7 +228,7 @@ public class BookController {
         BookSort bookSort = null;
         bookSort = sortService.getBookSortById(sortId);
         if (bookSort == null) {
-            ResultUtil.resultCode(500,"未找到该分类！");
+            return ResultUtil.resultCode(500,"未找到该分类！");
         }
         String sortName = bookSort.getSortName();
         List<Book> upperBookList = bookService.getBooksByFirst(sortName, 1, 14);
