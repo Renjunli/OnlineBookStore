@@ -7,6 +7,8 @@ import com.group7.store.entity.user.User;
 import com.group7.store.service.UserService;
 import com.group7.store.util.JwtTokenUtil;
 import com.group7.store.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,18 +36,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/18
  */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String CONTEXTTYPE = "application/json;charset=utf-8";
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
-    @Autowired
     private MyUserDetailService myUserDetailService;
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserService userService;
     @Autowired
@@ -59,7 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //同样地，这里将我们自己定义的加密工具类替换掉原先默认的加密替换类
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(myUserDetailService).passwordEncoder(new BCryptPasswordEncoder());
-//        auth.inMemoryAuthentication().withUser("杨兆延").password("$2a$10$vEBSLD7Wy7UsF2raEtZa0e5uUg0HGOosxEycfLdJj4LtkMiQIZXpm").roles("user");
     }
 
     @Override
@@ -80,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().logoutUrl("/logout").permitAll().logoutSuccessHandler(new LogoutSuccessHandler() {
             @Override
             public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                response.setContentType("application/json;charset=utf-8");
+                response.setContentType(CONTEXTTYPE);
                 PrintWriter out = response.getWriter();
                 HttpSession session = request.getSession();
                 session.removeAttribute("loginState");
@@ -113,17 +116,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override
             public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException, ServletException {
-                resp.setContentType("application/json;charset=utf-8");
+                resp.setContentType(CONTEXTTYPE);
                 PrintWriter out = resp.getWriter();
-                System.out.println("=============登录成功===============");
+                log.info("=============登录成功===============");
                 //从authentication中取出SecurityUser的信息
                 SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
                 String token = jwtTokenUtil.generateToken(securityUser);
                 token = "Bearer" + token;
-                System.out.println("====token:=====" + token + "=====");
+
                 resp.setHeader("Authorization", token);
                 resp.setHeader("Access-control-Expose-Headers", "Authorization");
-                System.out.println("从authentication中取出的用户信息" + securityUser.toString());
                 User user = new User();
                 user.setAccount(securityUser.getUsername());
                 boolean isManage = userService.getUser(user.getAccount()).isManage();
@@ -143,8 +145,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationFailureHandler(new AuthenticationFailureHandler() {
             @Override
             public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
-                resp.setContentType("application/json;charset=utf-8");
-                System.out.println("=============登录失败=================");
+                resp.setContentType(CONTEXTTYPE);
+                log.info("=============登录失败=================");
                 PrintWriter out = resp.getWriter();
                 out.write(new ObjectMapper().writeValueAsString("登录失败"));
                 out.flush();
