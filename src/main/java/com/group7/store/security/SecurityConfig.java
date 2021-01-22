@@ -107,11 +107,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(restAuthenticationEntryPoint);
 
         //添加登陆验证过滤器
-        http.addFilterAt(CAFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(cafilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
-    CustomAuthenticationFilter CAFilter() throws Exception {
+    CustomAuthenticationFilter cafilter() throws Exception {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override
@@ -129,11 +129,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 User user = new User();
                 user.setAccount(securityUser.getUsername());
                 boolean isManage = userService.getUser(user.getAccount()).isManage();
-                if (isManage) {
-                    user.setManage(true);
-                } else {
-                    user.setManage(false);
-                }
+                user.setManage(isManage);
                 Map<String, Object> map = new HashMap<>();
                 map.put("user", user);
                 String json = JSON.toJSONString(ResultUtil.resultSuccess(map));
