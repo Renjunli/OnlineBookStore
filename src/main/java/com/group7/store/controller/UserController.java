@@ -190,8 +190,7 @@ public class UserController {
         User user = new User();
         user.setId(id);
         user.setEnable(true);
-        log.info("=======id======:" + id);
-        log.info("=======status======:" + status);
+
         if (userService.updateUser(user) > 0) {
             return ResultUtil.resultCode(200, "修改成功");
         }

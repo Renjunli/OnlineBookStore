@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/18
  */
 @Service
@@ -19,7 +19,7 @@ public interface UserService {
 
     int updatePwd(String account, String newPassword);
 
-    int updateImg(String account, String ImgUrl);
+    int updateImg(String account, String imgUrl);
 
     boolean isExist(String account, String pwd);
 

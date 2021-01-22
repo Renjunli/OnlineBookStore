@@ -1,6 +1,7 @@
 package com.group7.store.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * @Author: YangZhaoYan
+ * @Author: Liuminge
  * @Date: 2021/1/18
  */
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -32,8 +33,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 Map<String, String> authenticationBean = mapper.readValue(is, Map.class);
                 //authenticationBean.get("account")为得到用户的账号
                 //authenticationBean.get("password")为得到用户的密码
-                System.out.println("=====authenticationBean.get(\"username\")=====" + authenticationBean.get("account") + "========");
-                System.out.println("=====authenticationBean.get(\"password\")=====" + authenticationBean.get("password") + "========");
                 authRequest = new UsernamePasswordAuthenticationToken(
                         authenticationBean.get("account"), authenticationBean.get("password"));
             } catch (IOException e) {
