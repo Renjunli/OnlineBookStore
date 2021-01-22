@@ -6,7 +6,6 @@ import com.group7.store.entity.user.User;
 import com.group7.store.service.AddressService;
 import com.group7.store.service.UserService;
 import com.group7.store.util.ResultUtil;
-import com.group7.store.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +99,8 @@ public class UserController {
         List<Address> addressList = addressService.addressList(account);
         for (Address address : addressList) {
             log.info("==============================");
-            log.info(address.toString());
+            String addressLog = address.toString();
+            log.info(addressLog);
         }
         map.put("addressList", addressList);
         return ResultUtil.resultSuccess(map);

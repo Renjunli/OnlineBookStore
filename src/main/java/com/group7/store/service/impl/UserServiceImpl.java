@@ -53,17 +53,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updateImg(String account, String ImgUrl) {
-        return userMapper.updateImg(account, ImgUrl);
+    public int updateImg(String account, String imgUrl) {
+        return userMapper.updateImg(account, imgUrl);
     }
 
     @Override
     public boolean isExist(String account, String pwd) {
         User user = userMapper.getUser(account);
-        if (pwd.equals(user.getPassword())) {
-            return true;
-        }
-        return false;
+        return pwd.equals(user.getPassword());
     }
 
 }
