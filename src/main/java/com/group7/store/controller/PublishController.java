@@ -42,8 +42,7 @@ public class PublishController {
         log.info("publish.isShowPublish()");
         log.info("publish.toString()");
 
-        //System.out.println(publish.isShowPublish());
-        //System.out.println(publish.toString());
+
         try {
             if (publishService.addPublish(publish) > 0) {
                 return ResultUtil.resultSuccess(map);
