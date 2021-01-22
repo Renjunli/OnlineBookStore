@@ -118,10 +118,10 @@ public class BookServiceImpl implements BookService {
     public int deleteBook(int id) {
         int result = bookMapper.deleteBook(id);
         if (result > 0) {
-            if (redisTemplate.hasKey(BOOK_PREFIX + id)) {
+            if (redisTemplate.hasKey(BOOK_PREFIX + id).equals(Boolean.TRUE)) {
                 redisTemplate.delete(BOOK_PREFIX + id);
             }
-            if (redisTemplate.hasKey(BOOK_STOCK + id)) {
+            if (redisTemplate.hasKey(BOOK_STOCK + id).equals(Boolean.TRUE)) {
                 redisTemplate.delete(BOOK_STOCK + id);
             }
         }
@@ -168,7 +168,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBook(int id) {
         ValueOperations<String, Book> operations = redisTemplate.opsForValue();
-        if (redisTemplate.hasKey(BOOK_PREFIX + id)) {
+        if (redisTemplate.hasKey(BOOK_PREFIX + id).equals(Boolean.TRUE)) {
             log.info("=========从缓存中读取单本图书的数据==========");
             return operations.get(BOOK_PREFIX + id);
         }

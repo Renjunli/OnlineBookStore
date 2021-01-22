@@ -209,7 +209,7 @@ public class BookController {
             log.info("=======设置了图书的封面图片========");
             bookList.get(i).setCoverImg(img);
         }
-        map.put(BOOK_LIST, BOOK_LIST);
+        map.put(BOOK_LIST, bookList);
         int total = bookService.getBookCount();
         map.put("total", total);
         return ResultUtil.resultSuccess(map);

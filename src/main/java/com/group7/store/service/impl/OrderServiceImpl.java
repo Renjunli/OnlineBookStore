@@ -44,12 +44,12 @@ public class OrderServiceImpl implements OrderService {
     public String initOrderId() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String newDate = sdf.format(new Date());
-        String result = "";
+        StringBuilder result = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 6; i++) {
-            result += random.nextInt(10);
+            result.append(random.nextInt(10));
         }
-        return newDate + result;
+        return newDate + result.toString();
     }
 
 
@@ -61,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
         Timestamp timestamp = new Timestamp(date.getTime());
         String orderId = initOrderId();
         order.setOrderId(orderId);
-        String msgInfo_1 = "============orderInitDto.getAccount():===========" + orderInitDto.getAccount() + "============";
-        log.info(msgInfo_1);
+        String msgInfo1 = "============orderInitDto.getAccount():===========" + orderInitDto.getAccount() + "============";
+        log.info(msgInfo1);
         order.setAccount(orderInitDto.getAccount());
         order.setAddressId(orderInitDto.getAddress().getId());//收货地址编号
         order.setOrderTime(timestamp);
@@ -76,24 +76,27 @@ public class OrderServiceImpl implements OrderService {
             orderDetail.setPrice(orderBookDto.getPrice());
             orderDetail.setOrderId(orderId);
             orderDetailList.add(orderDetail);
-            String msgInfo_2 = "=====orderDetail.toString()=====" + orderDetail.toString();
-            log.info(msgInfo_2);
+            String msgInfo2 = "=====orderDetail.toString()=====" + orderDetail.toString();
+            log.info(msgInfo2);
             String clientId = UUID.randomUUID().toString();
             try {
-                Boolean result = redisTemplate.opsForValue().setIfAbsent(STOCK_PREFIX + orderBookDto.getId(), clientId, 10, TimeUnit.SECONDS);
-                if (!result) {
+
+                if (!redisTemplate.opsForValue().setIfAbsent(STOCK_PREFIX + orderBookDto.getId(), clientId, 10, TimeUnit.SECONDS).equals(Boolean.TRUE)) {
                     return false;//获取分布式锁出错了！
                 }
-                if (redisTemplate.hasKey(BOOK_STOCK + orderBookDto.getId())) {//如果缓存中有库存数据
+                if (redisTemplate.hasKey(BOOK_STOCK + orderBookDto.getId()).equals(Boolean.TRUE)) {//如果缓存中有库存数据
                     int stock = Integer.parseInt((String) redisTemplate.opsForValue().get(BOOK_STOCK + orderBookDto.getId()));
                     if (stock > orderBookDto.getNum()) {
                         int realStock = stock - orderBookDto.getNum();
                         redisTemplate.opsForValue().set(BOOK_STOCK + orderBookDto.getId(), realStock);//更新库存缓存
                         ValueOperations<String, Book> operations = redisTemplate.opsForValue();
-                        if (redisTemplate.hasKey(BOOK_PREFIX + orderBookDto.getId())) {
-                            String msgInfo_3 = "=========从缓存中读取数据==========";
-                            log.info(msgInfo_3);
+                        if (redisTemplate.hasKey(BOOK_PREFIX + orderBookDto.getId()).equals(Boolean.TRUE)) {
+                            String msgInfo3 = "=========从缓存中读取数据==========";
+                            log.info(msgInfo3);
                             Book book = operations.get(BOOK_PREFIX + orderBookDto.getId());
+                            if (book == null) {
+                                return false;
+                            }
                             book.setStock(realStock);
                             redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);//更新图书缓存中的数据
                         }
@@ -103,11 +106,11 @@ public class OrderServiceImpl implements OrderService {
                         book.setStock(realStock);
 //                        redisTemplate.opsForZSet().add(bookList_prefix,book,book.getRank());//添加新的图书数据到缓存集合中去
                         try {
-                            String msgInfo_4 = "================开始减库存====================";
-                            log.info(msgInfo_4);
+                            String msgInfo4 = "================开始减库存====================";
+                            log.info(msgInfo4);
                             int update = bookMapper.modifyBookStock(orderBookDto.getId(), orderBookDto.getNum());//减去库存
-                            String msgInfo_5 = "==============减去库存=====================";
-                            log.info(msgInfo_5);
+                            String msgInfo5 = "==============减去库存=====================";
+                            log.info(msgInfo5);
                         } catch (Exception e) {
                             redisTemplate.opsForValue().set(BOOK_STOCK + orderBookDto.getId(), stock);//恢复缓存中的库存数量，避免少买
 //                            redisTemplate.opsForZSet().remove(book);//删除集合中原来的图书数据
@@ -115,16 +118,16 @@ public class OrderServiceImpl implements OrderService {
                             redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);//更新图书缓存中的数据
 //                            redisTemplate.opsForZSet().add(bookList_prefix,book,book.getRank());//添加新的图书数据到缓存集合中去
                         }
-                        String msgInfo_6 = "=============减去库存没有问题======================";
-                        log.info(msgInfo_6);
+                        String msgInfo6 = "=============减去库存没有问题======================";
+                        log.info(msgInfo6);
                     } else {
                         throw new Exception("=====库存不足========");
                     }
                 } else {
                     int update = bookMapper.modifyBookStock(orderBookDto.getId(), orderBookDto.getNum());//减去库存
                     if (update < 1) {
-                        String msgInfo_7 = "=====库存不足========";
-                        log.info(msgInfo_7);
+                        String msgInfo7 = "=====库存不足========";
+                        log.info(msgInfo7);
                         return false;
                     }
                 }
@@ -193,11 +196,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto findOrderDto(int id) {
-        OrderDto orderDto = new OrderDto();
+        OrderDto orderDto;
         orderDto = orderMapper.findOrderDto(id);
         List<OrderDetailDto> orderDetailDtoList = orderMapper.findOrderDetailDtoList(orderDto.getOrderId());
         for (int i = 0; i < orderDetailDtoList.size(); i++) {
-            System.out.println("=======" + orderDetailDtoList.get(i).toString() + "=====");
+            String msgLog = "=======" + orderDetailDtoList.get(i).toString() + "=====";
+            log.info(msgLog);
         }
         orderDto.setOrderDetailDtoList(orderDetailDtoList);
         return orderDto;
