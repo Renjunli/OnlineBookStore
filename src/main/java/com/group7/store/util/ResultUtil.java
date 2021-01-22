@@ -8,6 +8,10 @@ import java.util.Map;
  * @Date: 2021/1/17
  */
 public class ResultUtil {
+    private ResultUtil() {}
+
+    private static final String MESSAGE = "message";
+    private static final String CODE = "code";
 
     /**
      * 成功后的返回结果
@@ -16,8 +20,8 @@ public class ResultUtil {
      * @return
      */
     public static Map<String, Object> resultSuccess(Map<String, Object> resultMap) {
-        resultMap.put("message", "操作成功");
-        resultMap.put("code", 200);
+        resultMap.put(MESSAGE, "操作成功");
+        resultMap.put(CODE, 200);
         return resultMap;
     }
 
@@ -28,10 +32,10 @@ public class ResultUtil {
      * @return
      */
     public static Map<String, Object> resultError(Map<String, Object> resultMap) {
-        if(!resultMap.containsKey("message")){
-            resultMap.put("message", "操作失败");
+        if(!resultMap.containsKey(MESSAGE)){
+            resultMap.put(MESSAGE, "操作失败");
         }
-        resultMap.put("code", 500);
+        resultMap.put(CODE, 500);
         return resultMap;
     }
 
@@ -44,8 +48,8 @@ public class ResultUtil {
      */
     public static Map<String, Object> resultCode(Integer code, String msg) {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("message", msg);
-        resultMap.put("code", code);
+        resultMap.put(MESSAGE, msg);
+        resultMap.put(CODE, code);
         return resultMap;
     }
 }

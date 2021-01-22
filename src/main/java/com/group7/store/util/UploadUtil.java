@@ -12,6 +12,7 @@ import java.util.UUID;
  *
  */
 public class UploadUtil {
+    private UploadUtil(){};
     private static final Logger log = LoggerFactory.getLogger(UploadUtil.class);
 
     public static String uploadFile(MultipartFile file, String filePath) {
