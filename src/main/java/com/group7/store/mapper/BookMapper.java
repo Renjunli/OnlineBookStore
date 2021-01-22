@@ -269,4 +269,11 @@ public interface BookMapper {
      * @return
      */
     int getSecondBookCount(int bookSortId);
+
+    /**
+     * 按照书名、作者、ISBN、出版社获取图书
+     * @param searchParam
+     * @return
+     */
+    List<Book> getSearchBookList(String searchParam);
 }

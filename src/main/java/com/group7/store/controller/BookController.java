@@ -31,6 +31,19 @@ public class BookController {
     private String basePath = "D://ITsoftware//IDEA//data//Vue//book_01//";
     private String bookPath = "static//image//book//";
 
+    @GetMapping("/searchBook")
+    public Map<String, Object> searchBook(@RequestParam(value = "searchParam") String searchParam) {
+        Map<String, Object> map = new HashMap<>();
+        List<Book> searchBookList = bookService.getSearchBookList(searchParam);
+        if (searchBookList.isEmpty()) {
+            map.put("code", 500);
+            map.put("message", "为查到相关数据，请检查输入是否正确！");
+        } else {
+            map.put("booklist", searchBookList);
+        }
+        return map;
+    }
+
     /**
      * 添加图书
      *
@@ -220,7 +233,8 @@ public class BookController {
         if (bookSort == null) {
             ResultUtil.resultCode(500,"未找到该分类！");
         }
-        List<Book> upperBookList = bookService.getBooksByFirst(bookSort.getSortName(), 1, 14);
+        String sortName = bookSort.getSortName();
+        List<Book> upperBookList = bookService.getBooksByFirst(sortName, 1, 14);
         for (int i = 0; i < upperBookList.size(); i++) {
             String img = bookService.getBookCover(upperBookList.get(i).getisbn());
             upperBookList.get(i).setCoverImg(img);

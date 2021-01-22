@@ -22,6 +22,8 @@ public interface BookService {
 
     int modifyBookNewPro(int id, boolean newProduct);//修改图书是否为新品
 
+    List<Book> getSearchBookList(String searchParam);//按照书名、作者、ISBN、出版社获取图书
+
     int modifyBookStock(int id, int stockNum);//减库存stockNum
 
     int deleteBook(int id);

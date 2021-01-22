@@ -226,6 +226,8 @@
         select * from booksort where id in (select bookSortId from booksortlist where bookId=#{bookId})
     </select>
 
+
+
     <select id="getBooksByFirst" parameterType="list" resultType="com.group7.store.entity.book.Book">
         select * from book
         where id in (select t.bookId from
@@ -261,6 +263,15 @@
     <select id="getSecondBookCount" resultType="int">
          select count(*) from book
      where id in (select bookId from booksortlist where bookSortId=#{bookSortId})
+    </select>
+
+    <!--  首页的搜索框查询结果：书名、作者、ISBN、出版社 -->
+    <select id="getSearchBookList" resultType="com.group7.store.entity.book.Book">
+        select * from book where
+            isbn=#{searchParam} or
+            bookName like CONCAT('%',#{searchParam},'%') or
+            author like CONCAT('%',#{searchParam},'%') or
+            publish like CONCAT('%',#{searchParam},'%')
     </select>
 
 
