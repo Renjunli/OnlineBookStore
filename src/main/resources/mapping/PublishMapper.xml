@@ -27,11 +27,11 @@
     </select>
 
     <select id="getPublishByPage" resultType="com.group7.store.entity.book.Publish">
-        select * from publish limit #{page},#{pageSize}
+        select * from publish order by rank asc limit #{page},#{pageSize}
     </select>
 
     <select id="getPublishNames" resultType="String">
-        select name from publish
+        select name from publish where showPublish=1 order by rank asc
     </select>
 
 
