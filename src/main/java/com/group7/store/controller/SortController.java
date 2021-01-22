@@ -1,6 +1,5 @@
 package com.group7.store.controller;
 
-
 import com.group7.store.entity.book.BookSort;
 import com.group7.store.entity.dto.SortResponse;
 import com.group7.store.service.SortService;
@@ -11,6 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
+/**
+ * 图书分类管理
+ * jcz
+ * 2021.1.18
+ */
+
+
 @Controller
 @ResponseBody
 @RequestMapping(value = "/sort")
@@ -19,6 +25,7 @@ public class SortController {
     @Autowired
     @Qualifier("firstSort")
     SortService sortService;
+
 
     /**
      * 添加图书的分类
@@ -29,7 +36,6 @@ public class SortController {
      */
     @PostMapping("/addBookSort")
     public Map<String, Object> addBookSort(@RequestBody BookSort bookSort) {
-        System.out.println(bookSort.toString());
         if (sortService.addSort(bookSort) > 0) {
             return ResultUtil.resultCode(200, "添加图书分类成功");
         }
@@ -47,9 +53,7 @@ public class SortController {
     @GetMapping("/getBookSort")
     public Map<String, Object> getBookSort(@RequestParam(value = "upperName") String upperName,
                                            @RequestParam(value = "sortName") String sortName) {
-        System.out.println(upperName + sortName);
-        BookSort bookSort = new BookSort();
-        bookSort = sortService.getBookSort(upperName, sortName);
+        BookSort bookSort  = sortService.getBookSort(upperName, sortName);
         Map<String, Object> map = new HashMap<>();
         map.put("bookSort", bookSort);
         return ResultUtil.resultSuccess(map);
@@ -64,10 +68,12 @@ public class SortController {
      */
     @PostMapping("/modifyBookSort")
     public Map<String, Object> modifyBookSort(@RequestBody BookSort bookSort) {
-        if (bookSort.getUpperName().equals("无")) {//如果修改后上一级为无
-            BookSort bookSort1 = sortService.getBookSortById(bookSort.getId());//得到修改分类原来的值
-            System.out.println(bookSort1.toString());
-            if (!bookSort1.getSortName().equals(bookSort.getSortName())) {//如果修改分类的的原来的值不等于现
+        if ("无".equals(bookSort.getUpperName())) {
+            //如果修改后上一级为无
+            //得到修改分类原来的值
+            BookSort bookSort1 = sortService.getBookSortById(bookSort.getId());
+            if (!bookSort1.getSortName().equals(bookSort.getSortName())) {
+                //如果修改分类的的原来的值不等于当前值
                 sortService.modifySortUpperName(bookSort1.getSortName(), bookSort.getSortName());
             }
         }
@@ -78,7 +84,7 @@ public class SortController {
     }
 
     /**
-     * 按页到一级分类集合
+     * 分页查询一级分类列表
      * 2021/1/18
      * jcz
      * @param page
@@ -97,7 +103,7 @@ public class SortController {
     }
 
     /**
-     * 按页得到二级分类集合
+     * 分页查询二级分类列表
      * 2021/1/18
      * jcz
      * @param upperName
@@ -119,7 +125,7 @@ public class SortController {
 
 
     /**
-     * 得到所有一级分类的名称
+     * 查询所有一级分类
      * 2021/1/18
      * jcz
      * @return
@@ -136,7 +142,7 @@ public class SortController {
     }
 
     /**
-     * 得到分类的一级分类和二级分类，封装后放给前端
+     * 获取所有的一级分类和二级分类，封装后放给前端
      * 2021/1/18
      * jcz
      * @return
@@ -145,7 +151,8 @@ public class SortController {
     public Map<String, Object> getBookSortList() {
         Map<String, Object> map = new HashMap<>();
         List<SortResponse> sortResponseList = new ArrayList<>();
-        List<BookSort> bookSortList = sortService.getAllFirSorts();//得到所有一级分类
+        //查询所有一级分类
+        List<BookSort> bookSortList = sortService.getAllFirSorts();
         for (int i = 0; i < bookSortList.size(); i++) {
             List<BookSort> children = sortService.getSecondSortList(bookSortList.get(i).getSortName());
             SortResponse sortResponse = new SortResponse();
@@ -166,7 +173,6 @@ public class SortController {
      */
     @GetMapping("/delFirstSort")
     public Map<String, Object> deleteSort(@RequestParam(value = "sortName") String sortName) {
-        System.out.println(sortName);
         if (sortService.deleteFirSort(sortName) > 0) {
             return ResultUtil.resultCode(200, "删除分类成功");
         }
@@ -184,7 +190,6 @@ public class SortController {
     @GetMapping("/delSecondSort")
     public Map<String, Object> deleteSecSort(@RequestParam(value = "sortName") String sortName,
                                              @RequestParam(value = "upperName") String upperName) {
-        System.out.println(sortName);
         if (sortService.deleteSort(upperName, sortName) > 0) {
             return ResultUtil.resultCode(200, "删除分类成功");
         }
