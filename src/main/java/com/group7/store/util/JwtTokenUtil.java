@@ -21,8 +21,8 @@ public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
-    private static final String secret = "yangzhaoyan";
-    private static final Long expiration = 1800L;
+    private static final String YANGZHAOYAN = "yangzhaoyan";
+    private static final Long EXPIRATION = 1800L;
 
     /**
      * 根据负责生成JWT的token
@@ -31,7 +31,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, YANGZHAOYAN)
                 .compact();
     }
 
@@ -42,7 +42,7 @@ public class JwtTokenUtil {
         Claims claims = null;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(secret)
+                    .setSigningKey(YANGZHAOYAN)
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class JwtTokenUtil {
      * 生成token的过期时间
      */
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
+        return new Date(System.currentTimeMillis() + EXPIRATION * 1000);
     }
 
     /**
@@ -65,6 +65,9 @@ public class JwtTokenUtil {
         String username;
         try {
             Claims claims = getClaimsFromToken(token);
+            if (claims == null) {
+                return null;
+            }
             username = claims.getSubject();
         } catch (Exception e) {
             username = null;
@@ -88,6 +91,9 @@ public class JwtTokenUtil {
      */
     private boolean isTokenExpired(String token) {
         Date expiredDate = getExpiredDateFromToken(token);
+        if (expiredDate == null) {
+            return false;
+        }
         return expiredDate.before(new Date());
     }
 
@@ -96,6 +102,9 @@ public class JwtTokenUtil {
      */
     private Date getExpiredDateFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
+        if (claims == null) {
+            return null;
+        }
         return claims.getExpiration();
     }
 
@@ -121,6 +130,9 @@ public class JwtTokenUtil {
      */
     public String refreshToken(String token) {
         Claims claims = getClaimsFromToken(token);
+        if (claims == null){
+            return null;
+        }
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }

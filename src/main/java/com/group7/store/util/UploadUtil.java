@@ -12,7 +12,7 @@ import java.util.UUID;
  *
  */
 public class UploadUtil {
-    private UploadUtil(){};
+    private UploadUtil(){}
     private static final Logger log = LoggerFactory.getLogger(UploadUtil.class);
 
     public static String uploadFile(MultipartFile file, String filePath) {
@@ -25,6 +25,9 @@ public class UploadUtil {
             }
             // 获取文件名
             String fileName = file.getOriginalFilename();
+            if (fileName == null){
+                return null;
+            }
             // 获取文件的后缀名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
             // 设置文件存储路径
@@ -38,8 +41,6 @@ public class UploadUtil {
             file.transferTo(dest);// 文件写入
             log.info("====================成功写入=======================");
             return id + suffixName;
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
