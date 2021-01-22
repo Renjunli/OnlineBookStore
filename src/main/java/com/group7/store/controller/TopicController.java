@@ -10,8 +10,11 @@ import com.group7.store.service.TopicService;
 import com.group7.store.util.FileUtil;
 import com.group7.store.util.ResultUtil;
 import com.group7.store.util.UploadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.listener.Topic;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import java.util.*;
 @RequestMapping(value = "/topic")
 public class TopicController {
 
+    private static final Logger log = LoggerFactory.getLogger(TopicController.class);
     @Qualifier("firstTopic")
     @Autowired
     TopicService topicService;
@@ -32,9 +36,11 @@ public class TopicController {
     private String basePath = "D://ITsoftware//IDEA//data//Vue//book_01//";
     private String coverPath = "static//image//topic//";
 
+
+
     /**
      * 添加书单
-     *
+     *zhujiating
      * @param map
      * @param file
      * @return
@@ -46,8 +52,11 @@ public class TopicController {
         bookTopic.setRank(Integer.parseInt(map.get("rank")));
         bookTopic.setSubTitle(map.get("subTitle"));
         bookTopic.setPut(Boolean.valueOf(map.get("put")));
-        System.out.println(map.get("put"));
-        System.out.println(bookTopic.toString());
+        log.info(map.get("put"));
+        log.info(bookTopic.toString());
+
+       // System.out.println(map.get("put"));
+       // System.out.println(bookTopic.toString());
         String path = basePath + coverPath;
         String imgName = UploadUtil.uploadFile(file, path);
         bookTopic.setCover(coverPath + imgName);
@@ -59,13 +68,14 @@ public class TopicController {
 
     /**
      * 修改书单
-     *
+     *zhujiating
      * @param bookTopic
      * @return
      */
     @PostMapping("/modifyTopic")
     public Map<String, Object> modifyTopic(@RequestBody BookTopic bookTopic) {
-        System.out.println(bookTopic.toString());
+        log.info(bookTopic.toString());
+        //System.out.println(bookTopic.toString());
         if (topicService.modifyBookTopic(bookTopic) > 0) {
             return ResultUtil.resultCode(200, "修改书单成功");
         }
@@ -74,7 +84,7 @@ public class TopicController {
 
     /**
      * 删除书单
-     *
+     *zhujiating
      * @param url
      * @param id
      * @return
@@ -82,14 +92,17 @@ public class TopicController {
     @GetMapping("/delTopicImg")
     public Map<String, Object> delImg(@RequestParam(value = "url") String url,
                                       @RequestParam(value = "id") int id) {
-        System.out.println("删除图片");
+        log.info("删除图片");
+       // System.out.println("删除图片");
         String path = basePath + url;
-        System.out.println("删除的图片的路径是：" + path);
+        log.info("删除的图片的路径是：" + path);
+        //System.out.println("删除的图片的路径是：" + path);
         FileUtil.delOneImg(path);
         BookTopic topic = new BookTopic();
         topic.setId(id);
         topic.setCover("无");
-        System.out.println(topic.toString());
+        log.info(topic.toString());
+       // System.out.println(topic.toString());
         if (topicService.modifyBookTopic(topic) > 0) {
             return ResultUtil.resultCode(200, "删除图片成功");
         }
@@ -98,7 +111,7 @@ public class TopicController {
 
     /**
      * 上传书单图片
-     *
+     *zhujiating
      * @param map
      * @param file
      * @return
@@ -120,7 +133,7 @@ public class TopicController {
 
     /**
      * 修改书单排序
-     *
+     *zhujiating
      * @param rank
      * @param id
      * @return
@@ -128,7 +141,9 @@ public class TopicController {
     @GetMapping("/modifyTopicRank")
     public Map<String, Object> modifyRank(@RequestParam(value = "rank") int rank,
                                           @RequestParam(value = "id") int id) {
-        System.out.println("说明修改排序的函数器作用了");
+        log.info("说明修改排序的函数器作用了");
+        //log.info("rank");
+        //System.out.println("说明修改排序的函数器作用了");
         System.out.println(rank);
         BookTopic bookTopic = new BookTopic();
         bookTopic.setRank(rank);
@@ -142,7 +157,7 @@ public class TopicController {
 
     /**
      * 修改书单的上下架
-     *
+     *zhujiating
      * @param put
      * @param id
      * @return
@@ -161,12 +176,13 @@ public class TopicController {
 
     /**
      * 删除书单
-     *
+     *zhujiating
      * @param id
      * @return
      */
     @GetMapping("/delTopic")
     public Map<String, Object> delTopic(@RequestParam(value = "id") int id) {
+       // log.info(id);
         System.out.println(id);
         if (topicService.delBookTopic(id) > 0) {
             return ResultUtil.resultCode(200, "删除书单成功");
@@ -182,7 +198,7 @@ public class TopicController {
      */
     @GetMapping("/getTopic")
     public Map<String, Object> getTopic(@RequestParam(value = "id") int id) {
-        System.out.println(id);
+         System.out.println(id);
         BookTopic bookTopic = topicService.getBookTopic(id);
         Map<String, Object> map = new HashMap<>();
         map.put("bookTopic", bookTopic);
@@ -220,7 +236,8 @@ public class TopicController {
                                             @RequestParam(value = "pageSize") int pageSize,
                                             @RequestParam(value = "topicId") int topicId
     ) {
-        System.out.println("说明已经请求到了为添加到书单的图书");
+        log.info("说明已经请求到了为添加到书单的图书");
+      //  System.out.println("说明已经请求到了为添加到书单的图书");
         List<Book> bookList = topicService.getNoAddBookPage(topicId, page, pageSize);
         for (Book book : bookList) {
             book.setPut(false);
@@ -242,11 +259,13 @@ public class TopicController {
     @GetMapping("/addSubTopic")
     public Map<String, Object> addSubTopic(@RequestParam(value = "id") int id,
                                            @RequestParam(value = "bookId") int bookId) {
-        System.out.println("说明添加请求已经到添加图书到书单中");
+        log.info("说明添加请求已经到添加图书到书单中");
+       // System.out.println("说明添加请求已经到添加图书到书单中");
         SubBookTopic subBookTopic = new SubBookTopic();
         subBookTopic.setTopicId(id);
         subBookTopic.setBookId(bookId);
-        System.out.println(subBookTopic.toString());
+        log.info(subBookTopic.toString());
+       // System.out.println(subBookTopic.toString());
         if (topicService.addSubBookTopic(subBookTopic) > 0) {
             return ResultUtil.resultCode(200, "添加图书到书单成功");
         }
@@ -263,7 +282,8 @@ public class TopicController {
     @GetMapping("/delSubTopic")
     public Map<String, Object> delSubTopic(@RequestParam(value = "id") int id,
                                            @RequestParam(value = "bookId") int bookId) {
-        System.out.println("说明删除请求已经到删除图书的处理中");
+          log.info("说明删除请求已经到删除图书的处理中");
+       // System.out.println("说明删除请求已经到删除图书的处理中");
         if (topicService.delSubBookTopic(id, bookId) > 0) {
             return ResultUtil.resultCode(200, "删除书单图书成功");
         }
@@ -280,7 +300,8 @@ public class TopicController {
     @GetMapping("/getReason")
     public Map<String, Object> getRecReason(@RequestParam(value = "topicId") int topicId,
                                             @RequestParam(value = "bookId") int bookId) {
-        System.out.println("得到推荐理由起作用了");
+        log.info("得到推荐理由起作用了");
+       // System.out.println("得到推荐理由起作用了");
         String reason = topicService.getReason(topicId, bookId);
         Map<String, Object> map = new HashMap<>();
         map.put("reason", reason);
