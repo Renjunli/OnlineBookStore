@@ -4,6 +4,8 @@ import com.group7.store.entity.book.BookSort;
 import com.group7.store.entity.dto.SortResponse;
 import com.group7.store.service.SortService;
 import com.group7.store.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ public class SortController {
     @Autowired
     @Qualifier("firstSort")
     SortService sortService;
+    private static final Logger log = LoggerFactory.getLogger(SortController.class);
 
 
     /**
@@ -37,6 +40,8 @@ public class SortController {
     @PostMapping("/addBookSort")
     public Map<String, Object> addBookSort(@RequestBody BookSort bookSort) {
         if (sortService.addSort(bookSort) > 0) {
+            String msg = "图书分类添加成功";
+            log.info(msg);
             return ResultUtil.resultCode(200, "添加图书分类成功");
         }
         return ResultUtil.resultCode(500, "添加图书分类失败");
@@ -69,7 +74,7 @@ public class SortController {
     @PostMapping("/modifyBookSort")
     public Map<String, Object> modifyBookSort(@RequestBody BookSort bookSort) {
         if ("无".equals(bookSort.getUpperName())) {
-            //如果修改后上一级为无
+            //如果修改后无上一级
             //得到修改分类原来的值
             BookSort bookSort1 = sortService.getBookSortById(bookSort.getId());
             if (!bookSort1.getSortName().equals(bookSort.getSortName())) {
