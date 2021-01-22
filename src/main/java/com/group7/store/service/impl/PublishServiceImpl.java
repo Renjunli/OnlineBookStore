@@ -4,6 +4,7 @@ package com.group7.store.service.impl;
 import com.group7.store.entity.book.Publish;
 import com.group7.store.mapper.PublishMapper;
 import com.group7.store.service.PublishService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,31 +13,29 @@ import java.util.List;
 @Service("firstPublish")
 public class PublishServiceImpl implements PublishService {
 
+    private Logger log = Logger.getLogger(PublishServiceImpl.class);
+
     @Autowired
     PublishMapper publishMapper;
 
     @Override
     public int addPublish(Publish publish) {
-        int result = publishMapper.addPublish(publish);
-        return result;
+        return publishMapper.addPublish(publish);
     }
 
     @Override
     public int deletePublish(int id) {
-        int result = publishMapper.deletePublish(id);
-        return result;
+        return publishMapper.deletePublish(id);
     }
 
     @Override
     public int modifyPublish(Publish publish) {
-        int result = publishMapper.modifyPublish(publish);
-        return result;
+        return publishMapper.modifyPublish(publish);
     }
 
     @Override
     public int modifyIsShow(int id) {
-        int result = publishMapper.modifyIsShow(id);
-        return result;
+        return publishMapper.modifyIsShow(id);
     }
 
     @Override
@@ -47,7 +46,8 @@ public class PublishServiceImpl implements PublishService {
     @Override
     public List<Publish> getPublishByPage(int page, int pageSize) {
         int start = (page - 1) * pageSize;
-        System.out.println(start + ":" + pageSize);
+        String sLog = start + ":" + pageSize;
+        log.info(sLog);
         return publishMapper.getPublishByPage(start, pageSize);
     }
 

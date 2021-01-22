@@ -9,6 +9,7 @@ import com.group7.store.entity.dto.OrderBookDto;
 import com.group7.store.mapper.BookMapper;
 import com.group7.store.mapper.SortMapper;
 import com.group7.store.service.BookService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -20,10 +21,11 @@ import java.util.List;
 
 @Service("firstVersion")
 public class BookServiceImpl implements BookService {
+    private static final Logger log = Logger.getLogger(BookServiceImpl.class);
 
-    private static final String book_prefix = "bookStore_book_";
-    private static final String bookList_prefix = "bookStore_bookList";
-    private static final String book_stock = "book_stock_";
+    private static final String BOOK_PREFIX = "bookStore_book_";
+    private static final String BOOK_LIST_PREFIX = "bookStore_bookList";
+    private static final String BOOK_STOCK = "book_stock_";
 
     @Autowired
     BookMapper bookMapper;
@@ -39,12 +41,14 @@ public class BookServiceImpl implements BookService {
         int result = bookMapper.addBook(book);
         if (result > 0) {
             int bookId = bookMapper.getBookId(book.getisbn());
-            System.out.println("============bookId===============:" + bookId);
+            String bookIdLog = "============bookId===============:" + bookId;
+            log.info(bookIdLog);
             book.setId(bookId);
-            System.out.println("=======book：=======" + book.toString() + "============");
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-            redisTemplate.opsForValue().set(book_stock + book.getId(), book.getStock());
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            String bookLog = "=======book：=======" + book.toString() + "============";
+            log.info(bookLog);
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForValue().set(BOOK_STOCK + book.getId(), book.getStock());
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
@@ -56,66 +60,56 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int modifyBook(Book book) {
-        Book book1 = bookMapper.getBook(book.getId());
         int result = bookMapper.modifyBook(book);
         if (result > 0) {
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-            redisTemplate.opsForValue().set(book_stock + book.getId(), book.getStock());
-//            redisTemplate.opsForZSet().remove(book1);
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForValue().set(BOOK_STOCK + book.getId(), book.getStock());
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
 
     @Override
     public int modifyBookPut(int id, boolean put) {
-        Book book1 = bookMapper.getBook(id);
         int result = bookMapper.modifyBookPut(id, put);
         if (result > 0) {
             Book book = bookMapper.getBook(id);
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-//            redisTemplate.opsForZSet().remove(book1);
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
 
     @Override
     public int modifyBookRec(int id, boolean recommend) {
-        Book book1 = bookMapper.getBook(id);
         int result = bookMapper.modifyBookRec(id, recommend);
         if (result > 0) {
             Book book = bookMapper.getBook(id);
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-//            redisTemplate.opsForZSet().remove(book1);
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
 
     @Override
     public int modifyBookNewPro(int id, boolean newProduct) {
-        Book book1 = bookMapper.getBook(id);
         int result = bookMapper.modifyBookNewPro(id, newProduct);
         if (result > 0) {
             Book book = bookMapper.getBook(id);
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-//            redisTemplate.opsForZSet().remove(book1);
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
 
     @Override
     public int modifyBookStock(int id, int stockNum) {
-        Book book1 = bookMapper.getBook(id);
         int result = bookMapper.modifyBookStock(id, stockNum);
         if (result > 0) {
             Book book = bookMapper.getBook(id);
-            redisTemplate.opsForValue().set(book_prefix + book.getId(), book);
-            redisTemplate.opsForValue().set(book_stock + book.getId(), book.getStock());
-//            redisTemplate.opsForZSet().remove(book1);
-            redisTemplate.opsForZSet().add(bookList_prefix, book, book.getRank());
+            redisTemplate.opsForValue().set(BOOK_PREFIX + book.getId(), book);
+            redisTemplate.opsForValue().set(BOOK_STOCK + book.getId(), book.getStock());
+            redisTemplate.opsForZSet().add(BOOK_LIST_PREFIX, book, book.getRank());
         }
         return result;
     }
@@ -124,13 +118,12 @@ public class BookServiceImpl implements BookService {
     public int deleteBook(int id) {
         int result = bookMapper.deleteBook(id);
         if (result > 0) {
-            if (redisTemplate.hasKey(book_prefix + id)) {
-                redisTemplate.delete(book_prefix + id);
+            if (redisTemplate.hasKey(BOOK_PREFIX + id)) {
+                redisTemplate.delete(BOOK_PREFIX + id);
             }
-            if (redisTemplate.hasKey(book_stock + id)) {
-                redisTemplate.delete(book_stock + id);
+            if (redisTemplate.hasKey(BOOK_STOCK + id)) {
+                redisTemplate.delete(BOOK_STOCK + id);
             }
-//            redisTemplate.opsForZSet().remove(bookMapper.getBook(id));
         }
         return result;
     }
@@ -143,14 +136,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> getBooksByPage(int page, int pageSize) {
         int start = (page - 1) * pageSize;
-//        if(redisTemplate.hasKey(bookList_prefix)){
-//            System.out.println("======从缓存中获取图书集合=======");
-//            Set range = redisTemplate.opsForZSet().range(bookList_prefix, start, start + pageSize);
-//            List<Book> bookList = new ArrayList<>(range);
-//            return bookList;
-//        }else {
-//            return bookMapper.getBooksByPage(start,pageSize);
-//        }
         return bookMapper.getBooksByPage(start, pageSize);
     }
 
@@ -183,17 +168,16 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBook(int id) {
         ValueOperations<String, Book> operations = redisTemplate.opsForValue();
-        if (redisTemplate.hasKey(book_prefix + id)) {
-            System.out.println("=========从缓存中读取单本图书的数据==========");
-            Book book = operations.get(book_prefix + id);
-            return book;
+        if (redisTemplate.hasKey(BOOK_PREFIX + id)) {
+            log.info("=========从缓存中读取单本图书的数据==========");
+            return operations.get(BOOK_PREFIX + id);
         }
-        System.out.println("=========从数据库中读取单本图书的数据==========");
+        log.info("=========从数据库中读取单本图书的数据==========");
         return bookMapper.getBook(id);
     }
 
     @Override
-    public Book getBookDetail(String ISBN) {
+    public Book getBookDetail(String isbn) {
         return null;
     }
 
@@ -216,20 +200,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int addBookImg(BookImg bookImg) {
-        int result = bookMapper.addBookImg(bookImg);
-        return result;
+        return bookMapper.addBookImg(bookImg);
     }
 
     @Override
     public int deleteBookImgOfOne(String isbn) {
-        int result = bookMapper.deleteBookImgOfOne(isbn);
-        return result;
+        return bookMapper.deleteBookImgOfOne(isbn);
     }
 
     @Override
     public int deleteOneBookImg(String isbn, String imgSrc) {
-        int result = bookMapper.deleteOneBookImg(isbn, imgSrc);
-        return result;
+        return bookMapper.deleteOneBookImg(isbn, imgSrc);
     }
 
     @Override
@@ -249,20 +230,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int addToRecommend(Recommend recommend) {
-        int result = bookMapper.addToRecommend(recommend);
-        return result;
+        return bookMapper.addToRecommend(recommend);
     }
 
     @Override
     public int deleteFromRecommend(int bookId) {
-        int result = bookMapper.deleteFromRecommend(bookId);
-        return result;
+        return bookMapper.deleteFromRecommend(bookId);
     }
 
     @Override
     public int modifyRecommendRank(int bookId, int rank) {
-        int result = bookMapper.modifyRecommendRank(bookId, rank);
-        return result;
+        return bookMapper.modifyRecommendRank(bookId, rank);
     }
 
     @Override
@@ -278,20 +256,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int addToNewProduct(Recommend newProduct) {
-        int result = bookMapper.addToNewProduct(newProduct);
-        return result;
+        return bookMapper.addToNewProduct(newProduct);
     }
 
     @Override
     public int deleteFromNewProduct(int bookId) {
-        int result = bookMapper.deleteFromNewProduct(bookId);
-        return result;
+        return bookMapper.deleteFromNewProduct(bookId);
     }
 
     @Override
     public int modifyNewProductRank(int bookId, int rank) {
-        int result = bookMapper.modifyNewProductRank(bookId, rank);
-        return result;
+        return bookMapper.modifyNewProductRank(bookId, rank);
     }
 
 
@@ -309,20 +284,17 @@ public class BookServiceImpl implements BookService {
     //有关图书分类的操作
     @Override
     public int addBookToSort(int bookSortId, int bookId) {
-        int result = bookMapper.addBookToSort(bookSortId, bookId);
-        return result;
+        return bookMapper.addBookToSort(bookSortId, bookId);
     }
 
     @Override
     public int delBookFromSort(int booSortId, int bookId) {
-        int result = bookMapper.delBookFromSort(booSortId, bookId);
-        return result;
+        return bookMapper.delBookFromSort(booSortId, bookId);
     }
 
     @Override
     public int modifyBookSort(int bookSortId, int bookId) {
-        int result = bookMapper.modifyBookSort(bookSortId, bookId);
-        return result;
+        return bookMapper.modifyBookSort(bookSortId, bookId);
     }
 
     @Override
@@ -362,7 +334,6 @@ public class BookServiceImpl implements BookService {
             if (bookMapper.deleteBook(idS[i]) < 1) {
                 return 0;
             }
-            ;
         }
         return 1;
     }
@@ -383,7 +354,7 @@ public class BookServiceImpl implements BookService {
         Date date = new Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         r.setAddTime(timestamp);
-        if (recommend == true) {
+        if (recommend) {
             for (int i = 0; i < idS.length; i++) {
                 int isExistInRec = bookMapper.hasExistInRec(idS[i]);
                 if (isExistInRec == 0) {

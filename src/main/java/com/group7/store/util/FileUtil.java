@@ -8,6 +8,7 @@ import java.util.List;
  * @Date: 2021/1/17
  */
 public class FileUtil {
+    private FileUtil(){};
     public static String delImg(List<String> path) {
         for (int i = 0; i < path.size(); i++) {
             File file = new File(path.get(i));
