@@ -50,6 +50,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> getSearchBookList(String searchParam) {
+        return bookMapper.getSearchBookList(searchParam);
+    }
+
+    @Override
     public int modifyBook(Book book) {
         Book book1 = bookMapper.getBook(book.getId());
         int result = bookMapper.modifyBook(book);

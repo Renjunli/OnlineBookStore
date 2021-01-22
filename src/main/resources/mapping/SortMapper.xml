@@ -2,28 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.group7.store.mapper.SortMapper">
 
-    <!--对书的分类 -->
+    <!--图书分类管理 -->
+
+    <!--添加分类-->
     <insert id="addSort" parameterType="com.group7.store.entity.book.BookSort">
-        insert into booksort(upperName,sortName,level,rank)
-        values (#{upperName},#{sortName},#{level},#{rank})
+        INSERT INTO
+        BOOKSORT(upperName,sortName,level,rank)
+        VALUES
+        (#{upperName},#{sortName},#{level},#{rank})
     </insert>
 
+    <!--删除分类-->
     <delete id="deleteSort">
-        delete from booksort
-            where sortName=#{sortName} and upperName=#{upperName}
+        DELETE FROM BOOKSORT
+        WHERE sortName=#{sortName} AND upperName=#{upperName}
     </delete>
 
+    <!--删除一级分类-->
     <delete id="deleteFirSort">
-        delete from booksort where (upperName="无" and sortName=#{sortName}) or upperName=#{sortName}
+        DELETE FROM BOOKSORT
+            WHERE (upperName="无" and sortName=#{sortName}) OR upperName=#{sortName}
     </delete>
 
+    <!--修改分类-->
     <update id="modifySort">
-        update booksort
-            set upperName=#{upperName},
-                sortName=#{sortName},
-                rank=#{rank},
-                sortName=#{sortName}
-            where id=#{id}
+        UPDATE BOOKSORT
+            SET
+        <if test="upperName != null AND upperName !=''">
+            upperName=#{upperName},
+        </if>
+        <if test="sortName != null AND sortName !=''">
+            sortName=#{sortName},
+        </if>
+        <if test="rank != null AND rank !=''">
+            rank=#{rank},
+        </if>
+        <if test="sortName != null AND sortName">
+            sortName=#{sortName}
+        </if>
+            WHERE id=#{id}
     </update>
 
     <update id="modifySortUpperName">
@@ -32,12 +49,25 @@
             where upperName=#{oldUpperName}
     </update>
 
+
     <select id="getBookSort" resultType="com.group7.store.entity.book.BookSort">
-        select * from booksort where upperName=#{upperName} and sortName=#{sortName}
+        SELECT
+            *
+        FROM
+            booksort
+        WHERE 1=1
+        <if test="upperName != null AND upperName !=''">
+            AND upperName=#{upperName}
+        </if>
+        <if test="sortName != null AND sortName !=''">
+            AND sortName=#{sortName}
+        </if>
     </select>
 
     <select id="getBookSortId" resultType="int">
-        select id from booksort where upperName=#{upperName} and sortName=#{sortName}
+        SELECT id
+        FROM booksort
+        WHERE upperName=#{upperName} and sortName=#{sortName}
     </select>
 
     <select id="getBookSortById" resultType="com.group7.store.entity.book.BookSort">
@@ -45,7 +75,9 @@
     </select>
 
     <select id="getFirstSorts" resultType="com.group7.store.entity.book.BookSort">
-        select * from booksort where level="级别一" limit #{page},#{pageSize}
+        SELECT * FROM booksort
+        WHERE level="级别一"
+        LIMIT #{page},#{pageSize}
     </select>
 
     <select id="getAllFirSorts" resultType="com.group7.store.entity.book.BookSort">
@@ -68,7 +100,6 @@
         select id from booksort where (upperName="无" and sortName=#{sortName}) or upperName=#{sortName}
     </select>
 
-
     <select id="getSecSortIdPage" resultType="int">
         select id from booksort where upperName=#{sortName} limit #{page},#{pageSize}
     </select>
@@ -78,7 +109,12 @@
     </select>
 
     <select id="getSecondCount" resultType="int">
-        select count(*) from booksort where upperName=#{upperName}
+        SELECT
+            count(*)
+        FROM
+            booksort
+        WHERE
+            upperName=#{upperName}
     </select>
 
 </mapper>
