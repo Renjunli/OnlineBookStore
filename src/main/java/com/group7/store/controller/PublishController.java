@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.Map;
 @Controller
 @ResponseBody
 public class PublishController {
-    private static final Logger log = LoggerFactory.getLogger(TopicController.class);
+    private static final Logger log = LoggerFactory.getLogger(PublishController.class);
 
     @Autowired
     @Qualifier("firstPublish")
@@ -102,7 +101,7 @@ public class PublishController {
      * @return
      */
     @GetMapping("/getEditPublish")
-    Map<String, Object> getEditPublish(@RequestParam int id) {
+    public Map<String, Object> getEditPublish(@RequestParam int id) {
         Map<String, Object> map = new HashMap<>();
         Publish publish = publishService.getPublishById(id);
         map.put("publish", publish);
@@ -118,10 +117,9 @@ public class PublishController {
      * @return
      */
     @PostMapping("/modifyPublish")
-    Map<String, Object> modifyPublish(@RequestBody Publish publish) {
+    public Map<String, Object> modifyPublish(@RequestBody Publish publish) {
         Map<String, Object> map = new HashMap<>();
         if (publishService.modifyPublish(publish) > 0) {
-            System.out.println("修改成功");
             return ResultUtil.resultSuccess(map);
         }
         return ResultUtil.resultError(map);
@@ -135,10 +133,9 @@ public class PublishController {
      * @return
      */
     @GetMapping("/modifyShowPublish")
-    Map<String, Object> modifyIsShow(@RequestParam int id) {
+    public Map<String, Object> modifyIsShow(@RequestParam int id) {
         if (publishService.modifyIsShow(id) > 0) {
             log.info("修改成功");
-           // System.out.println("修改成功");
             return ResultUtil.resultCode(200, "修改成功！");
         }
         return ResultUtil.resultCode(500, "修改失败");
@@ -151,10 +148,9 @@ public class PublishController {
      * @return
      */
     @GetMapping("/delPublish")
-    Map<String, Object> delPublish(@RequestParam int id) {
+    public Map<String, Object> delPublish(@RequestParam int id) {
         if (publishService.deletePublish(id) > 0) {
             log.info("删除成功");
-           // System.out.println("删除成功");
             return ResultUtil.resultCode(200, "删除成功");
         }
         return ResultUtil.resultCode(500, "删除失败");

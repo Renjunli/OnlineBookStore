@@ -21,8 +21,6 @@ public class SecurityUser implements UserDetails {
     private boolean enabled;
     private List<GrantedAuthority> roles;
 
-    public SecurityUser() {
-    }
 
     public Long getId() {
         return id;

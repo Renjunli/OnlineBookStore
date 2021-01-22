@@ -26,8 +26,7 @@ public class Publish {
      */
     private Integer num;
 
-    public Publish() {
-    }
+
 
 
     public int getId() {
