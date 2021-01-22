@@ -40,7 +40,7 @@ public class Book {
     /**
      * 书的图片地址
      */
-    private List<String> ImgSrc;
+    private List<String> imgSrc;
     /**
      * 是否上架
      */
@@ -57,8 +57,7 @@ public class Book {
     private boolean recommend;
     private int[] bookSort;
 
-    public Book() {
-    }
+
 
 
     public int getId() {
@@ -143,11 +142,11 @@ public class Book {
 
 
     public List<String> getImgSrc() {
-        return ImgSrc;
+        return imgSrc;
     }
 
     public void setImgSrc(List<String> imgSrc) {
-        ImgSrc = imgSrc;
+        this.imgSrc = imgSrc;
     }
 
     public boolean isPut() {
@@ -211,7 +210,7 @@ public class Book {
                 ", price=" + price +
                 ", stock=" + stock +
                 ", description='" + description + '\'' +
-                ", ImgSrc=" + ImgSrc +
+                ", ImgSrc=" + imgSrc +
                 ", put=" + put +
                 ", coverImg='" + coverImg + '\'' +
                 ", rank=" + rank +

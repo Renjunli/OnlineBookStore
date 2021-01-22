@@ -44,7 +44,7 @@ public interface BookService {
 
     Book getBook(int id);//获取图书的所有
 
-    Book getBookDetail(String ISBN);//获得图书用于后台页表展示的信息(除去图书详情页和部分图书相册)
+    Book getBookDetail(String iSBN);//获得图书用于后台页表展示的信息(除去图书详情页和部分图书相册)
 
     int getPublishBookNum(String publishName);//得到某一出版社的图书的数量
 
