@@ -7,7 +7,6 @@ import com.group7.store.entity.book.Recommend;
 import com.group7.store.entity.dto.SortBookRes;
 import com.group7.store.service.BookService;
 import com.group7.store.service.SortService;
-import com.group7.store.util.FileUtil;
 import com.group7.store.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,8 +27,6 @@ public class BookController {
     @Autowired
     @Qualifier("firstSort")
     SortService sortService;
-    private String basePath = "D://ITsoftware//IDEA//data//Vue//book_01//";
-    private String bookPath = "static//image//book//";
 
     @GetMapping("/searchBook")
     public Map<String, Object> searchBook(@RequestParam(value = "searchParam") String searchParam) {
@@ -387,18 +384,8 @@ public class BookController {
         System.out.println("删除图书起作用");
         System.out.println("isbn:" + bookId);
         Book book = bookService.getBook(bookId);
-        List<String> imgPaths = bookService.getBookImgSrcList(book.getisbn());
-        for (int i = 0; i < imgPaths.size(); i++) {
-            String path = basePath + imgPaths.get(i);
-            imgPaths.set(i, path);
-        }
         if (bookService.deleteBook(bookId) > 0 && bookService.deleteBookImgOfOne(book.getisbn()) > 0) {
             System.out.println("删除图片大于0");
-
-            for (int i = 0; i < imgPaths.size(); i++) {
-                System.out.println(imgPaths.get(i));
-            }
-            FileUtil.delImg(imgPaths);
             return ResultUtil.resultCode(200, "删除图书成功");
         }
         return ResultUtil.resultCode(500, "删除图书失败");
