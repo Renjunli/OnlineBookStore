@@ -36,33 +36,34 @@ public class OssUploadImage {
     private String filedir;
 
     /**
-     *
      * 上传图片
+     *
      * @param file
      * @return
      */
-    public  String uploadImg2Oss(MultipartFile file) {
-        if (file.getSize() > 1024 * 1024 *20) {
-            //RestResultGenerator.createErrorResult(ResponseEnum.PHOTO_TOO_MAX);
+    public String uploadImg2Oss(MultipartFile file) {
+        if (file.getSize() > 1024 * 1024 * 20) {
             return "图片太大";
         }
         String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) {
+            return null;
+        }
         String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
         Random random = new Random();
         String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
         try {
             InputStream inputStream = file.getInputStream();
-            //RestResultGenerator.createSuccessResult(name);
             this.uploadFile2OSS(inputStream, name);
             return name;
         } catch (Exception e) {
-            //RestResultGenerator.createErrorResult(ResponseEnum.PHOTO_UPLOAD);
             return "上传失败";
         }
     }
 
     /**
      * 上传图片获取fileUrl
+     *
      * @param instream
      * @param fileName
      * @return
@@ -86,9 +87,7 @@ public class OssUploadImage {
             log.error(e.getMessage(), e);
         } finally {
             try {
-                if (instream != null) {
-                    instream.close();
-                }
+                instream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -96,40 +95,40 @@ public class OssUploadImage {
         return ret;
     }
 
-    public static String getcontentType(String FilenameExtension) {
-        if (FilenameExtension.equalsIgnoreCase(".bmp")) {
+    public static String getcontentType(String filenameExtension) {
+        if (filenameExtension.equalsIgnoreCase(".bmp")) {
             return "image/bmp";
         }
-        if (FilenameExtension.equalsIgnoreCase(".gif")) {
+        if (filenameExtension.equalsIgnoreCase(".gif")) {
             return "image/gif";
         }
-        if (FilenameExtension.equalsIgnoreCase(".jpeg") ||
-                FilenameExtension.equalsIgnoreCase(".jpg") ||
-                FilenameExtension.equalsIgnoreCase(".png")) {
+        if (filenameExtension.equalsIgnoreCase(".jpeg") ||
+                filenameExtension.equalsIgnoreCase(".jpg") ||
+                filenameExtension.equalsIgnoreCase(".png")) {
             return "image/jpg";
         }
-        if (FilenameExtension.equalsIgnoreCase(".html")) {
+        if (filenameExtension.equalsIgnoreCase(".html")) {
             return "text/html";
         }
-        if (FilenameExtension.equalsIgnoreCase(".txt")) {
+        if (filenameExtension.equalsIgnoreCase(".txt")) {
             return "text/plain";
         }
-        if (FilenameExtension.equalsIgnoreCase(".vsd")) {
+        if (filenameExtension.equalsIgnoreCase(".vsd")) {
             return "application/vnd.visio";
         }
-        if (FilenameExtension.equalsIgnoreCase(".pptx") ||
-                FilenameExtension.equalsIgnoreCase(".ppt")) {
+        if (filenameExtension.equalsIgnoreCase(".pptx") ||
+                filenameExtension.equalsIgnoreCase(".ppt")) {
             return "application/vnd.ms-powerpoint";
         }
-        if (FilenameExtension.equalsIgnoreCase(".xls") ||
-                FilenameExtension.equalsIgnoreCase(".xlsx")) {
+        if (filenameExtension.equalsIgnoreCase(".xls") ||
+                filenameExtension.equalsIgnoreCase(".xlsx")) {
             return "application/vnd.ms-excel";
         }
-        if (FilenameExtension.equalsIgnoreCase(".docx") ||
-                FilenameExtension.equalsIgnoreCase(".doc")) {
+        if (filenameExtension.equalsIgnoreCase(".docx") ||
+                filenameExtension.equalsIgnoreCase(".doc")) {
             return "application/msword";
         }
-        if (FilenameExtension.equalsIgnoreCase(".xml")) {
+        if (filenameExtension.equalsIgnoreCase(".xml")) {
             return "text/xml";
         }
         return "image/jpg";
@@ -137,14 +136,14 @@ public class OssUploadImage {
 
     /**
      * 获取图片路径
+     *
      * @param fileUrl
      * @return
      */
     public String getImgUrl(String fileUrl) {
-        if (fileUrl!=null) {
+        if (fileUrl != null) {
             String[] split = fileUrl.split("/");
-            String url =  this.getUrl(this.filedir + split[split.length - 1]);
-            return url;
+            return this.getUrl(this.filedir + split[split.length - 1]);
         }
         return null;
     }
@@ -157,7 +156,7 @@ public class OssUploadImage {
      */
     public String getUrl(String key) {
         // 设置URL过期时间为10年  3600l* 1000*24*365*10
-        Date expiration = new Date(System.currentTimeMillis()+ 3600L * 1000 * 24 * 365 * 10);
+        Date expiration = new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 365 * 10);
         // 生成URL
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         URL url = ossClient.generatePresignedUrl(bucketName, key, expiration);
@@ -170,31 +169,33 @@ public class OssUploadImage {
 
     /**
      * 多图片上传
+     *
      * @param fileList
      * @return
      */
     public String checkList(List<MultipartFile> fileList) {
-        String  fileUrl = "";
-        String  str = "";
-        String  photoUrl = "";
-        for(int i = 0;i< fileList.size();i++){
+        String fileUrl = "";
+        String str = "";
+        StringBuilder photoUrl = new StringBuilder();
+        for (int i = 0; i < fileList.size(); i++) {
             fileUrl = uploadImg2Oss(fileList.get(i));
             str = getImgUrl(fileUrl);
-            if(i == 0){
-                photoUrl = str;
-            }else {
-                photoUrl += "," + str;
+            if (i == 0) {
+                photoUrl = photoUrl.append(str);
+            } else {
+                photoUrl.append(",").append(str);
             }
         }
-        return photoUrl.trim();
+        return photoUrl.toString().trim();
     }
 
     /**
      * 单个图片上传
+     *
      * @param file
      * @return
      */
-    public  String uploadImg(MultipartFile file){
+    public String uploadImg(MultipartFile file) {
         String fileUrl = uploadImg2Oss(file);
         String str = getImgUrl(fileUrl);
         return str.trim();
