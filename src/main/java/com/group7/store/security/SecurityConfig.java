@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/user/states", "/user/switch", "/book/modify").hasAnyRole("ADMIN")
-                .antMatchers("/user/init", "/book/get", "/user/code", "/user/signup", "/book/detail", "/book/search", "/images/*", "/mail").permitAll()
+                .antMatchers("/user/init", "/book/get", "/user/code", "/user/signup", "/book/detail", "/book/search", "/images/*", "/mail","/img/*").permitAll()
                 .antMatchers("/book/*", "/register", "/sort/*", "/topic/*", "/user/register", "/user/accountVerify")// 对登录注册要允许匿名访问
                 .permitAll()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
