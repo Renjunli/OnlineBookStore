@@ -23,8 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int addUser(User user) {
-        int result = userMapper.addUser(user);
-        return result;
+        return userMapper.addUser(user);
     }
 
     @Override
@@ -35,8 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersByPage(int page, int pageSize) {
-        page = (page - 1) * pageSize;
-        return userMapper.getUsersByPage(page, pageSize);
+        return userMapper.getUsersByPage((page - 1) * pageSize, pageSize);
     }
 
     @Override
