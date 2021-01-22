@@ -215,7 +215,11 @@ public class BookController {
      */
     @GetMapping(value = "/getSortBookList")
     public Map<String, Object> getSortBookList(@RequestParam(value = "sortId") int sortId) {
-        BookSort bookSort = sortService.getBookSortById(sortId);
+        BookSort bookSort = null;
+        bookSort = sortService.getBookSortById(sortId);
+        if (bookSort == null) {
+            ResultUtil.resultCode(500,"未找到该分类！");
+        }
         List<Book> upperBookList = bookService.getBooksByFirst(bookSort.getSortName(), 1, 14);
         for (int i = 0; i < upperBookList.size(); i++) {
             String img = bookService.getBookCover(upperBookList.get(i).getisbn());
