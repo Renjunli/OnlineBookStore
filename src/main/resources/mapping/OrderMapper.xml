@@ -130,10 +130,10 @@
         LEFT JOIN expense AS e ON o.orderId = e.orderId
         LEFT JOIN address AS a ON a.id = o.addressId
         <where>
-            <if test="userId != null or userId != ''">
+            <if test="userId != null and userId != ''">
                 AND o.account = #{userId}
             </if>
-            <if test="orderStatus != null or orderStatus != ''">
+            <if test="orderStatus != null and orderStatus != ''">
                 AND o.orderStatus = #{orderStatus}
             </if>
             AND o.beUserDelete = #{beUserDelete}
