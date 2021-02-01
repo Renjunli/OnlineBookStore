@@ -40,6 +40,7 @@ public class BookController {
             map.put("code", 500);
             map.put("message", "为查到相关数据，请检查输入是否正确！");
         } else {
+            map.put("code",200);
             map.put("booklist", searchBookList);
         }
         return map;
